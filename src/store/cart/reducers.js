@@ -7,13 +7,21 @@ const initialState = I.Map({
 });
 
 const handleCreate = (state, { payload }) => {
-  console.log(state.updateIn(['items'], value => value.merge(payload)));
   return state.updateIn(['items'], value => value.merge(payload));
+};
+
+const handleRemove = (state, { payload }) => {
+  return state.updateIn(['items'], value =>
+    value.filter(item => {
+      return item.id !== payload;
+    }),
+  );
 };
 
 export default handleActions(
   {
     [actions.create]: handleCreate,
+    [actions.remove]: handleRemove,
   },
   initialState,
 );

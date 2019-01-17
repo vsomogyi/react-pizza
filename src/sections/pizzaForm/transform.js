@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 const transformProps = ({ size, setSize, data }) => ({
   size,
-  setSize: e => setSize(e.target.value),
+  setSize: e => setSize(e.target.value.toUpperCase()),
   pizzaSizes: data.pizzaSizes || [],
 });
 

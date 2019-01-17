@@ -5,3 +5,4 @@ import { createAction } from 'redux-actions';
 // ------------------------------------
 
 export const create = createAction('CART_CREATE');
+export const remove = createAction('CART_REMOVE');

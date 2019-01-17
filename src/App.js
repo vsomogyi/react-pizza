@@ -1,12 +1,10 @@
-import React, { Component } from 'react';
 import './App.css';
-import { Provider } from 'react-redux';
-import { ApolloProvider } from 'react-apollo';
 import Client from './store/client';
-// import Pizzas from './sections/pizzas/index';
-import PizzaForm from './sections/pizzaForm';
+import Layout from './sections/layout';
+import React, { Component } from 'react';
 import createStore from './store/createStore';
-import Cart from './sections/cart';
+import { ApolloProvider } from 'react-apollo';
+import { Provider } from 'react-redux';
 
 const store = createStore();
 
@@ -16,8 +14,7 @@ class App extends Component {
       <div className="App">
         <Provider store={store}>
           <ApolloProvider client={Client}>
-            <PizzaForm />
-            <Cart />
+            <Layout />
           </ApolloProvider>
         </Provider>
       </div>

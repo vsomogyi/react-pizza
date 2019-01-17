@@ -1,20 +1,22 @@
+import './styles.css';
 import React from 'react';
 import Toppings from './toppings';
 
 const PizzaFormView = ({ pizzaSizes, size, setSize }) => (
-  <div>
+  <div className="pizza-form">
+    <h2>Select pizza</h2>
     <form>
-      <select name="size" onChange={setSize}>
+      <label className="pizza-form__label">Pizza size</label>
+      <select name="size" onChange={setSize} className="pizza-form__select">
         {pizzaSizes.map(p => (
-          <option value={p.name.toUpperCase()} key={p.name}>
+          <option value={p.name} key={p.name}>
             {p.name}
           </option>
         ))}
       </select>
     </form>
-    <hr />
+    <label className="pizza-form__label">Toppings</label>
     <Toppings pizzaSize={size} />
-    {size}
   </div>
 );
 

@@ -1,27 +1,62 @@
-import { compose, setDisplayName, setPropTypes, withState } from 'recompose';
 import PropTypes from 'prop-types';
-import { withFormik } from 'formik';
 import { connect } from 'react-redux';
 import { create } from '../../../store/cart/actions';
+import { uniqueId } from 'lodash/fp';
+import { withFormik } from 'formik';
+import {
+  compose,
+  setDisplayName,
+  setPropTypes,
+  withState,
+  withProps,
+} from 'recompose';
 
 const handleSubmit = (values, { props }) => {
-  console.log({ values, props });
   props.addToCart(values);
 };
 
+const mapPropsToValues = ({ toppings }) => ({
+  selectedToppings: toppings
+    .filter(topping => topping.defaultSelected)
+    .map(topping => topping.name),
+});
+
 const mapDispatchToProps = (dispatch, ownProps) => {
-  console.log(ownProps);
   return {
     addToCart: values => {
       dispatch(
         create({
-          size: values.size,
+          id: uniqueId(),
+          size: ownProps.pizzaSize,
           selectedToppings: values.selectedToppings,
-          price: values.price,
+          price: ownProps.totalPrice,
         }),
       );
     },
   };
+};
+
+const isChecked = (values, topping) =>
+  values.selectedToppings.includes(topping.name);
+
+const isDisabled = maxToppings => (values, topping) =>
+  maxToppings &&
+  values.selectedToppings.length >= maxToppings &&
+  !values.selectedToppings.includes(topping.name);
+
+const onChange = (setTotalPrice, totalPrice) => (
+  arrayHelpers,
+  values,
+  topping,
+) => e => {
+  if (e.target.checked) {
+    arrayHelpers.push(topping.name);
+    setTotalPrice(totalPrice + topping.price);
+  } else {
+    const idx = values.selectedToppings.indexOf(topping.name);
+    arrayHelpers.remove(idx);
+    setTotalPrice(totalPrice - topping.price);
+  }
 };
 
 export default compose(
@@ -38,38 +73,25 @@ export default compose(
       }),
     ),
   }),
+  withState('totalPrice', 'setTotalPrice', ({ toppings, basePrice }) =>
+    toppings.reduce(
+      (acc, topping) => (topping.defaultSelected ? acc + topping.price : acc),
+      basePrice,
+    ),
+  ),
   connect(
     null,
     mapDispatchToProps,
   ),
-  // withState('totalPrice', 'setTotalPrice', ({ toppings }) =>
-  //   toppings.reduce(
-  //     (acc, topping) => (topping.defaultSelected ? acc + topping.price : acc),
-  //     0,
-  //   ),
-  // ),
   withFormik({
     displayName: 'PizzaForm',
-    handleSubmit,
     enableReinitialize: true,
-    mapPropsToValues: ({ pizzaSize, toppings, basePrice, maxToppings }) => ({
-      size: pizzaSize,
-      maxToppings,
-      selectedToppings: toppings
-        .filter(topping => topping.defaultSelected)
-        .map(topping => topping.name),
-      price:
-        basePrice +
-        toppings.reduce(
-          (acc, topping) =>
-            topping.defaultSelected ? acc + topping.price : acc,
-          0,
-        ),
-    }),
+    handleSubmit,
+    mapPropsToValues,
   }),
-  // withProps(({ toppings, values }) => ({
-  //   toppingSum: toppings
-  //     .filter(topping => values.selectedToppings.includes(topping.name))
-  //     .reduce((acc, cur) => acc + cur.price, 0),
-  // })),
+  withProps(({ maxToppings, setTotalPrice, totalPrice }) => ({
+    isChecked,
+    isDisabled: isDisabled(maxToppings),
+    onChange: onChange(setTotalPrice, totalPrice),
+  })),
 );

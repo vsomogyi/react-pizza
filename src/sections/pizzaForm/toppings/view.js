@@ -1,8 +1,17 @@
 import React from 'react';
 import { Form, FieldArray } from 'formik';
 
-const PizzaFormView = ({ values, toppings }) => (
-  <div>
+const PizzaFormView = ({
+  values,
+  toppings,
+  totalPrice,
+  setTotalPrice,
+  maxToppings,
+  isChecked,
+  isDisabled,
+  onChange,
+}) => (
+  <div className="pizza-form__toppings">
     <Form>
       <FieldArray
         name="selectedToppings"
@@ -15,24 +24,9 @@ const PizzaFormView = ({ values, toppings }) => (
                     name="selectedToppings"
                     type="checkbox"
                     value={topping.name}
-                    checked={values.selectedToppings.includes(topping.name)}
-                    disabled={
-                      values.maxToppings &&
-                      values.selectedToppings.length >= values.maxToppings &&
-                      !values.selectedToppings.includes(topping.name)
-                    }
-                    onChange={e => {
-                      if (e.target.checked) {
-                        arrayHelpers.push(topping.name);
-                        values.price = values.price + topping.price;
-                      } else {
-                        const idx = values.selectedToppings.indexOf(
-                          topping.name,
-                        );
-                        arrayHelpers.remove(idx);
-                        values.price = values.price - topping.price;
-                      }
-                    }}
+                    checked={isChecked(values, topping)}
+                    disabled={isDisabled(values, topping)}
+                    onChange={onChange(arrayHelpers, values, topping)}
                   />
                   {topping.name} (+{topping.price})
                 </label>
@@ -41,9 +35,11 @@ const PizzaFormView = ({ values, toppings }) => (
           </div>
         )}
       />
-      <hr />
-      <div>Price: {values.price}</div>
-      <button type="submit">Order</button>
+      <label className="pizza-form__label">Total price</label>
+      <div className="pizza-form__price">{totalPrice}</div>
+      <button className="pizza-form__button" type="submit">
+        Add to cart
+      </button>
     </Form>
   </div>
 );
