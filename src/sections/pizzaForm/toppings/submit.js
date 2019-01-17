@@ -62,7 +62,7 @@ const onChange = (setTotalPrice, totalPrice) => (
 export default compose(
   setDisplayName('ToppingsSubmit'),
   setPropTypes({
-    pizzaSize: PropTypes.oneOf(['SMALL', 'MEDIUM', 'LARGE']),
+    pizzaSize: PropTypes.string,
     basePrice: PropTypes.number,
     maxToppings: PropTypes.number,
     toppings: PropTypes.arrayOf(

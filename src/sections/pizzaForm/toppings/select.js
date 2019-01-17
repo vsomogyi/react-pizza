@@ -7,7 +7,7 @@ import withLoader from '../../../hoc/withLoader';
 export default compose(
   setDisplayName('ToppingsSelect'),
   setPropTypes({
-    pizzaSize: PropTypes.oneOf(['SMALL', 'MEDIUM', 'LARGE']),
+    pizzaSize: PropTypes.string,
   }),
   graphql(getPizzaSize, {
     options: ({ pizzaSize }) => ({

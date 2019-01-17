@@ -16,7 +16,7 @@ const transformProps = ({ data, pizzaSize }) => ({
 export default compose(
   setDisplayName('ToppingsTransform'),
   setPropTypes({
-    pizzaSize: PropTypes.oneOf(['SMALL', 'MEDIUM', 'LARGE']),
+    pizzaSize: PropTypes.string,
     data: PropTypes.object,
   }),
   mapProps(transformProps),
